@@ -20,6 +20,7 @@ jobs:
           pytest
       - name: Build and Publish
         run: |
+          poetry config pypi-token.pypi ${PYPI_API_KEY}
           poetry build
           poetry publish
 on:
