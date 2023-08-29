@@ -12,13 +12,13 @@ class ColorGenerator:
         self.imagePixels = self.image.load()
         rgb = list(self.image.getdata())
         self.dataframe = pd.DataFrame([
-            {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(pic.getdata())
+            {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(self.image.getdata())
         ])
         self.ks = None
 
     def normalize(self):
         scaler = StandardScaler()
-        scale = scaler.fit(self.dataframe)
+        scale = scaler.fit_transform(self.dataframe)
         self.dataframe = pd.DataFrame([
             {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(scale)
         ])
@@ -37,7 +37,7 @@ class ColorGenerator:
     def find_densist_scale(self):
         largest_set = {
             "cluster": None,
-            "count": 0
+            "size": 0
         }
         for k in self.ks:
             if largest_set["size"] < len(self.dataframe[self.dataframe["cluster"] == k]):
@@ -51,8 +51,8 @@ class ColorGenerator:
         cluster = self.find_densist_scale()
         filtered = self.dataframe[self.dataframe["cluster"] == cluster]
         filtered = filtered.drop(columns=["cluster"])
-        r, g, b = filtered["r"].mean(
-        ), filtered["g"].mean(), filtered["b"].mean()
+        r, g, b = round(filtered["r"].mean(
+        )), round(filtered["g"].mean()), round(filtered["b"].mean())
         self.color_as_image = Image.new(
             "RGB", (self.imageWidth, self.imageHeight), (r, g, b))
         self.color_as_RGB = f"rgb({r},{g},{b})"

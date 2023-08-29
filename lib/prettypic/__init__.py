@@ -1,1 +1,1 @@
-from ColorGen import color_from_image
+from .ColorGen import color_from_image
