@@ -18,6 +18,8 @@ jobs:
         run: |
           pip install .
           pytest
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
       - name: Build and Publish
         run: |
           poetry build
