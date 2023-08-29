@@ -1,11 +1,13 @@
 [tool.poetry]
-name = "prettypic"
+name = "prettyPic"
 version = "0.1.0"
 description = "Takes a picture and finds the best color equality using machine learning. The use case this was built for was album cover backdrops, but others exist."
 authors = ["msherburne <mathieusherburne@outlook.com>"]
 license = "MIT"
+keywords = ['image', 'pretty', 'python3', 'color']
+documentation = "https://github.com/msherburne/prettyPic"
 readme = "README.md"
-repository = ""
+repository = "https://github.com/msherburne/prettyPic"
 packages = [
     { include = "prettypic", from = "lib" }
 ]
@@ -16,8 +18,14 @@ Pillow = "^10.0.0"
 pandas = "^2.0.3"
 numpy = "^1.25.2"
 scikit-learn = "^1.3.0"
+pytest = "^7.4.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "lib/tests/main.py"
+]
