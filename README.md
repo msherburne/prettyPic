@@ -8,7 +8,7 @@ pip install prettyPic
 
 ## Usage
 ```python
-from prettyPic import color_from_image
+from prettypic import color_from_image
 
 color = color_from_image('path/to/image.png')
 print(color.color)
@@ -22,4 +22,3 @@ color.color_as_rgb # rgb(rrr, ggg, bbb)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
-```

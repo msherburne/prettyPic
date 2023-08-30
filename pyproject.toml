@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prettyPic"
-version = "0.1.0"
+version = "1.0.0"
 description = "Takes a picture and finds the best color equality using machine learning. The use case this was built for was album cover backdrops, but others exist."
 authors = ["msherburne <mathieusherburne@outlook.com>"]
 license = "MIT"
