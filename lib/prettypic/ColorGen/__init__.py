@@ -4,16 +4,27 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
 
+def initial_filters(df):
+    rows_to_drop = []
+    for index, row in df.iterrows():
+        if row["r"] < 90 and row["g"] < 90 and row["b"] < 90:
+            rows_to_drop.append(index)
+        elif row["r"] > 170 and row["g"] > 170 and row["b"] > 170:
+            rows_to_drop.append(index)
+    filtered_df = df.drop(rows_to_drop)
+    return filtered_df
+
+
 class ColorGenerator:
-    def __init__(self, imagePath):
+    def __init__(self, imagePath, initial_filters=initial_filters):
         self.imagePath = imagePath
         self.image = Image.open(imagePath)
         self.imageWidth, self.imageHeight = self.image.size
         self.imagePixels = self.image.load()
         rgb = list(self.image.getdata())
-        self.dataframe = pd.DataFrame([
+        self.dataframe = initial_filters(pd.DataFrame([
             {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(self.image.getdata())
-        ])
+        ]))
         self.ks = None
 
     def normalize(self):
