@@ -30,18 +30,19 @@ class ColorGenerator:
     def normalize(self):
         scaler = StandardScaler()
         scale = scaler.fit_transform(self.dataframe)
-        self.dataframe = pd.DataFrame([
+        self.scaled_df = pd.DataFrame([
             {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(scale)
         ])
 
     def kmeans_df(self, k):
         kmeans = KMeans(n_clusters=k, n_init="auto")
-        kmeans.fit(self.dataframe)
+        kmeans.fit(self.scaled_df)
         ks = []
         for i in kmeans.labels_:
             if i not in ks:
                 ks.append(i)
         self.ks = ks
+        self.scaled_df["cluster"] = kmeans.labels_
         self.dataframe["cluster"] = kmeans.labels_
         return self.dataframe
 
@@ -71,13 +72,15 @@ class ColorGenerator:
         return (r, g, b)
 
 
-def color_from_image(imagePath):
+def color_from_image(imagePath, initial_filters=initial_filters):
     """Turns an image into a plain color
 
     Parameters
     ----------
     imagePath : str
         path to the image
+    initial_filters : function
+        function to filter out the colors that are not wanted. Should recieve a dataframe with columns: r, g, b and return the same columns filtered down. Used to make sure that megadarks and megawhites are not used in the algorithm.
 
     Returns
     -------
@@ -87,7 +90,7 @@ def color_from_image(imagePath):
             - color_as_image
             - color_as_RGB
     """
-    colorGen = ColorGenerator(imagePath)
+    colorGen = ColorGenerator(imagePath, initial_filters=initial_filters)
     colorGen.normalize()
     colorGen.kmeans_df(4)
     colorGen.use_densist_color()
