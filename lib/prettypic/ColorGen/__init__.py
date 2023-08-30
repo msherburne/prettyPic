@@ -19,22 +19,22 @@ class ColorGenerator:
     def __init__(self, imagePath, initial_filters=initial_filters):
         self.imagePath = imagePath
         self.image = Image.open(imagePath)
-        self.imageWidth, self.imageHeight = self.image.size
-        self.imagePixels = self.image.load()
+        self._imageWidth, self.imageHeight = self.image.size
+        self._imagePixels = self.image.load()
         rgb = list(self.image.getdata())
         self.dataframe = initial_filters(pd.DataFrame([
             {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(self.image.getdata())
         ]))
-        self.ks = None
+        self._ks = None
 
-    def normalize(self):
+    def _normalize(self):
         scaler = StandardScaler()
         scale = scaler.fit_transform(self.dataframe)
         self.scaled_df = pd.DataFrame([
             {"r": pixel[0], "g": pixel[1], "b": pixel[2]} for pixel in list(scale)
         ])
 
-    def kmeans_df(self, k):
+    def _kmeans_df(self, k):
         kmeans = KMeans(n_clusters=k, n_init="auto")
         kmeans.fit(self.scaled_df)
         ks = []
@@ -46,7 +46,7 @@ class ColorGenerator:
         self.dataframe["cluster"] = kmeans.labels_
         return self.dataframe
 
-    def find_densist_scale(self):
+    def _find_densist_scale(self):
         largest_set = {
             "cluster": None,
             "size": 0
@@ -59,14 +59,14 @@ class ColorGenerator:
         self.densist_scale = largest_set["cluster"]
         return largest_set["cluster"]
 
-    def use_densist_color(self):
-        cluster = self.find_densist_scale()
+    def _use_densist_color(self):
+        cluster = self._find_densist_scale()
         filtered = self.dataframe[self.dataframe["cluster"] == cluster]
         filtered = filtered.drop(columns=["cluster"])
         r, g, b = round(filtered["r"].mean(
         )), round(filtered["g"].mean()), round(filtered["b"].mean())
         self.color_as_image = Image.new(
-            "RGB", (self.imageWidth, self.imageHeight), (r, g, b))
+            "RGB", (self._imageWidth, self._imageHeight), (r, g, b))
         self.color_as_RGB = f"rgb({r},{g},{b})"
         self.color = (r, g, b)
         return (r, g, b)
@@ -91,7 +91,7 @@ def color_from_image(imagePath, initial_filters=initial_filters):
             - color_as_RGB
     """
     colorGen = ColorGenerator(imagePath, initial_filters=initial_filters)
-    colorGen.normalize()
-    colorGen.kmeans_df(4)
-    colorGen.use_densist_color()
+    colorGen._normalize()
+    colorGen._kmeans_df(4)
+    colorGen._use_densist_color()
     return colorGen
