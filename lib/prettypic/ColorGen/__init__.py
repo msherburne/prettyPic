@@ -1,6 +1,6 @@
 from PIL import Image
 import pandas as pd
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN
 from sklearn.preprocessing import StandardScaler
 
 
@@ -46,6 +46,18 @@ class ColorGenerator:
         self.dataframe["cluster"] = kmeans.labels_
         return self.dataframe
 
+    def _dbscan_df(self):
+        dbscan = DBSCAN(min_samples=4)
+        dbscan.fit(self.scaled_df)
+        ks = []
+        for i in dbscan.labels_:
+            if i not in ks:
+                ks.append(i)
+        self.ks = ks
+        self.scaled_df["cluster"] = dbscan.labels_
+        self.dataframe['cluster'] = dbscan.labels_
+        return self.dataframe
+
     def _find_densist_scale(self):
         largest_set = {
             "cluster": None,
@@ -72,13 +84,17 @@ class ColorGenerator:
         return (r, g, b)
 
 
-def color_from_image(imagePath, initial_filters=initial_filters):
+def color_from_image(imagePath, algorithm="kmeans", initial_filters=initial_filters):
     """Turns an image into a plain color
 
     Parameters
     ----------
     imagePath : str
         path to the image
+    algorithm: str
+        the algorithm to use for clustering
+        - kmeans (default)
+        - dbscan
     initial_filters : function
         function to filter out the colors that are not wanted. Should recieve a dataframe with columns: r, g, b and return the same columns filtered down. Used to make sure that megadarks and megawhites are not used in the algorithm.
 
@@ -92,6 +108,11 @@ def color_from_image(imagePath, initial_filters=initial_filters):
     """
     colorGen = ColorGenerator(imagePath, initial_filters=initial_filters)
     colorGen._normalize()
-    colorGen._kmeans_df(4)
+    if algorithm == "kmeans":
+        colorGen._kmeans_df(4)
+    elif algorithm == "dbscan":
+        colorGen._dbscan_df()
+    else:
+        colorGen._kmeans_df(4)
     colorGen._use_densist_color()
     return colorGen
