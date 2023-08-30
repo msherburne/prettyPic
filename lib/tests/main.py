@@ -20,3 +20,13 @@ def test_color_generations(image):
         assert color.color_as_image is not None
         assert color.color_as_image.size == (
             color._imageWidth, color._imageHeight)
+
+
+def test_color_generations_with_dbscan(image):
+    image = image[0]
+    color = color_from_image(get_path(image), algorithm="dbscan")
+    assert len(color.color) == 3
+    assert len(color.color_as_RGB) > 0
+    assert color.color_as_image is not None
+    assert color.color_as_image.size == (
+        color._imageWidth, color._imageHeight)
