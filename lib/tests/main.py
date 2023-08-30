@@ -19,4 +19,4 @@ def test_color_generations(image):
         assert len(color.color_as_RGB) > 0
         assert color.color_as_image is not None
         assert color.color_as_image.size == (
-            color.imageWidth, color.imageHeight)
+            color._imageWidth, color._imageHeight)
