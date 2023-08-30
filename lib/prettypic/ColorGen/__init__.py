@@ -100,6 +100,8 @@ def color_from_image(imagePath, algorithm="kmeans", initial_filters=initial_filt
         - dbscan
     initial_filters : function
         function to filter out the colors that are not wanted. Should recieve a dataframe with columns: r, g, b and return the same columns filtered down. Used to make sure that megadarks and megawhites are not used in the algorithm.
+    overdrive : bool
+        if True, the dbscan algorithm will use all the cores available on the machine. This will make the algorithm faster but will use more resources. Only recommended for systems with low cpu power. This is only used if algorithm is set to dbscan.
 
     Returns
     -------

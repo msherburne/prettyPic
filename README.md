@@ -13,6 +13,14 @@ from prettypic import color_from_image
 color = color_from_image('path/to/image.png')
 print(color.color)
 ```
+### KMeans or DBSCAN
+```python
+from prettypic import color_from_image
+
+color = color_from_image('path/to/image.png', algorithm='kmeans')
+# or
+color = color_from_image('path/to/image.png', algorithm='dbscan')
+```
 #### Response
 ```python
 color.color # (r, g, b)
