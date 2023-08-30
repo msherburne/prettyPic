@@ -46,8 +46,11 @@ class ColorGenerator:
         self.dataframe["cluster"] = kmeans.labels_
         return self.dataframe
 
-    def _dbscan_df(self):
-        dbscan = DBSCAN(min_samples=4)
+    def _dbscan_df(self, overdrive):
+        cpus = 1
+        if overdrive:
+            cpus = -1
+        dbscan = DBSCAN(eps=.08, n_jobs=cpus)
         dbscan.fit(self.scaled_df)
         ks = []
         for i in dbscan.labels_:
@@ -84,7 +87,7 @@ class ColorGenerator:
         return (r, g, b)
 
 
-def color_from_image(imagePath, algorithm="kmeans", initial_filters=initial_filters):
+def color_from_image(imagePath, algorithm="kmeans", initial_filters=initial_filters, overdrive=False):
     """Turns an image into a plain color
 
     Parameters
@@ -106,12 +109,13 @@ def color_from_image(imagePath, algorithm="kmeans", initial_filters=initial_filt
             - color_as_image
             - color_as_RGB
     """
-    colorGen = ColorGenerator(imagePath, initial_filters=initial_filters)
+    colorGen = ColorGenerator(
+        imagePath, initial_filters=initial_filters)
     colorGen._normalize()
     if algorithm == "kmeans":
         colorGen._kmeans_df(4)
     elif algorithm == "dbscan":
-        colorGen._dbscan_df()
+        colorGen._dbscan_df(overdrive=overdrive)
     else:
         colorGen._kmeans_df(4)
     colorGen._use_densist_color()
