@@ -19,7 +19,7 @@ class ColorGenerator:
     def __init__(self, imagePath, initial_filters=initial_filters):
         self.imagePath = imagePath
         self.image = Image.open(imagePath)
-        self._imageWidth, self.imageHeight = self.image.size
+        self._imageWidth, self._imageHeight = self.image.size
         self._imagePixels = self.image.load()
         rgb = list(self.image.getdata())
         self.dataframe = initial_filters(pd.DataFrame([
